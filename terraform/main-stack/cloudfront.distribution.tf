@@ -10,17 +10,17 @@ resource "aws_cloudfront_distribution" "site" {
     origin_access_control_id = aws_cloudfront_origin_access_control.this.id
   }
 
-  # origin {
-  #   domain_name = data.aws_lb.this.dns_name
-  #   origin_id   = data.aws_lb.this.dns_name
+  origin {
+    domain_name = data.aws_lb.this.dns_name
+    origin_id   = data.aws_lb.this.dns_name
 
-  #   custom_origin_config {
-  #     http_port              = 80
-  #     https_port             = 443
-  #     origin_protocol_policy = "http-only"
-  #     origin_ssl_protocols   = ["TLSv1.2"]
-  #   }
-  # }
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "http-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
+    }
+  }
 
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
@@ -32,19 +32,19 @@ resource "aws_cloudfront_distribution" "site" {
     viewer_protocol_policy = "allow-all"
   }
 
-  # ordered_cache_behavior {
-  #   path_pattern     = "/backend/*"
-  #   allowed_methods  = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
-  #   cached_methods   = ["GET", "HEAD", "OPTIONS"]
-  #   target_origin_id = data.aws_lb.this.dns_name
+  ordered_cache_behavior {
+    path_pattern     = "/backend/*"
+    allowed_methods  = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+    cached_methods   = ["GET", "HEAD", "OPTIONS"]
+    target_origin_id = data.aws_lb.this.dns_name
 
-  #   # UseOriginCacheControlHeaders-QueryStrings
-  #   cache_policy_id = "4cc15a8a-d715-48a4-82b8-cc0b614638fe"
+    # UseOriginCacheControlHeaders-QueryStrings
+    cache_policy_id = "4cc15a8a-d715-48a4-82b8-cc0b614638fe"
 
-  #   # Managed-AllViewer
-  #   origin_request_policy_id = "216adef6-5c7f-47e4-b989-5492eafa07d3"
-  #   viewer_protocol_policy   = "allow-all"
-  # }
+    # Managed-AllViewer
+    origin_request_policy_id = "216adef6-5c7f-47e4-b989-5492eafa07d3"
+    viewer_protocol_policy   = "allow-all"
+  }
 
   restrictions {
     geo_restriction {

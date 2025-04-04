@@ -1,3 +1,3 @@
-# data "aws_lb" "this" {
-#   name = "devops-na-nuvem-ingress"
-# }
+data "aws_lb" "this" {
+  name = "devops-na-nuvem-ingress"
+}

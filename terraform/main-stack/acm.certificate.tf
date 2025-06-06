@@ -1,10 +1,10 @@
 resource "aws_acm_certificate" "this" {
-  provider          = aws.virginia
   domain_name       = "devopsnanuvemweek.com"
   validation_method = "DNS"
+  provider          = aws.virginia
 }
 
-resource "aws_route53_record" "site" {
+resource "aws_route53_record" "certificate" {
   for_each = {
     for dvo in aws_acm_certificate.this.domain_validation_options : dvo.domain_name => {
       name   = dvo.resource_record_name
@@ -22,7 +22,7 @@ resource "aws_route53_record" "site" {
 }
 
 resource "aws_acm_certificate_validation" "this" {
-  provider                = aws.virginia
   certificate_arn         = aws_acm_certificate.this.arn
-  validation_record_fqdns = [for record in aws_route53_record.site : record.fqdn]
+  provider                = aws.virginia
+  validation_record_fqdns = [for record in aws_route53_record.certificate : record.fqdn]
 }

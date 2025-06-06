@@ -1,20 +1,20 @@
+variable "authentication" {
+  type = object({
+    assume_role_arn = string
+    region          = string
+  })
+
+  default = {
+    assume_role_arn = "arn:aws:iam::968225077300:role/LiveMiniCursoDevOpsAWSRole"
+    region          = "us-west-1"
+  }
+}
+
 variable "tags" {
   type = map(string)
   default = {
     Environment = "production"
-    Project     = "devops-na-nuvem"
-  }
-}
-
-variable "assume_role" {
-  type = object({
-    region   = string
-    role_arn = string
-  })
-
-  default = {
-    region   = "us-west-1"
-    role_arn = "arn:aws:iam::968225077300:role/DevOpsNaNuvemLive-42026310-919c-4dff-83e6-f89ad2f5c8f3"
+    Project     = "mini-curso-devops-aws"
   }
 }
 
@@ -41,73 +41,71 @@ variable "vpc" {
   })
 
   default = {
-    name                     = "devops-na-nuvem-vpc"
+    name                     = "mini-curso-devops-aws-vpc"
     cidr_block               = "10.0.0.0/24"
-    internet_gateway_name    = "internet-gateway"
-    nat_gateway_name         = "nat-gateway"
-    public_route_table_name  = "public-route-table"
-    private_route_table_name = "private-route-table"
-    public_subnets = [{
-      name                    = "public-us-west-1a"
-      cidr_block              = "10.0.0.0/26"
-      availability_zone       = "us-west-1a"
-      map_public_ip_on_launch = true
+    internet_gateway_name    = "mini-curso-devops-aws-internet-gateway"
+    nat_gateway_name         = "mini-curso-devops-aws-nat-gateway"
+    public_route_table_name  = "mini-curso-devops-aws-public-route-table"
+    private_route_table_name = "mini-curso-devops-aws-private-route-table"
+    public_subnets = [
+      {
+        name                    = "mini-curso-devops-aws-vpc-public-subnet-1a"
+        cidr_block              = "10.0.0.0/26"
+        availability_zone       = "us-west-1a"
+        map_public_ip_on_launch = true
       },
       {
-        name                    = "public-us-west-1c"
+        name                    = "mini-curso-devops-aws-vpc-public-subnet-1c"
         cidr_block              = "10.0.0.64/26"
         availability_zone       = "us-west-1c"
         map_public_ip_on_launch = true
-    }]
-    private_subnets = [{
-      name                    = "private-us-west-1a"
-      cidr_block              = "10.0.0.128/26"
-      availability_zone       = "us-west-1a"
-      map_public_ip_on_launch = false
+      }
+    ]
+    private_subnets = [
+      {
+        name                    = "mini-curso-devops-aws-vpc-private-subnet-1a"
+        cidr_block              = "10.0.0.128/26"
+        availability_zone       = "us-west-1a"
+        map_public_ip_on_launch = false
       },
       {
-        name                    = "private-us-west-1c"
+        name                    = "mini-curso-devops-aws-vpc-private-subnet-1c"
         cidr_block              = "10.0.0.192/26"
         availability_zone       = "us-west-1c"
         map_public_ip_on_launch = false
-    }]
+      }
+    ]
   }
 }
 
 variable "eks_cluster" {
-
   type = object({
-    name                                   = string
-    role_name                              = string
-    version                                = string
-    enabled_cluster_log_types              = list(string)
-    access_config_authentication_mode      = string
-    node_group_name                        = string
-    node_group_role_name                   = string
-    node_group_capacity_type               = string
-    node_group_instance_types              = list(string)
-    node_group_scaling_config_desired_size = string
-    node_group_scaling_config_max_size     = string
-    node_group_scaling_config_min_size     = string
-    karpenter_controller_role_name         = string
-    karpenter_controll_policy_name         = string
+    name                              = string
+    role_name                         = string
+    version                           = string
+    enabled_cluster_log_types         = list(string)
+    access_config_authentication_mode = string
+    node_group_role_name              = string
+    node_group_name                   = string
+    node_group_instance_types         = list(string)
+    node_group_capacity_type          = string
+    scaling_config_desired_size       = number
+    scaling_config_max_size           = number
+    scaling_config_min_size           = number
   })
-
   default = {
-    name                                   = "devops-na-nuvem-eks-cluster"
-    role_name                              = "DevOpsNaNuvemEKSClusterRole"
-    version                                = "1.31"
-    enabled_cluster_log_types              = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
-    access_config_authentication_mode      = "API_AND_CONFIG_MAP"
-    node_group_role_name                   = "DevOpsNaNuvemEKSNodeGroupRole"
-    node_group_name                        = "devops-na-nuvem-eks-node-group"
-    node_group_capacity_type               = "ON_DEMAND"
-    node_group_instance_types              = ["t3.medium"]
-    node_group_scaling_config_desired_size = "2"
-    node_group_scaling_config_max_size     = "2"
-    node_group_scaling_config_min_size     = "2"
-    karpenter_controller_role_name         = "KarpenterControllerRole"
-    karpenter_controll_policy_name         = "KarpenterControllerPolicy"
+    name                              = "mini-curso-devops-aws-eks-cluster"
+    role_name                         = "MiniCursoDevOpsAwsEksClusterRole"
+    version                           = "1.33"
+    enabled_cluster_log_types         = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+    access_config_authentication_mode = "API_AND_CONFIG_MAP"
+    node_group_role_name              = "MiniCursoDevOpsAwsEksNodeGroupRole"
+    node_group_name                   = "node-group"
+    node_group_instance_types         = ["t3.medium"]
+    node_group_capacity_type          = "ON_DEMAND"
+    scaling_config_desired_size       = 2
+    scaling_config_max_size           = 2
+    scaling_config_min_size           = 2
   }
 }
 
@@ -115,16 +113,18 @@ variable "ecr_repositories" {
   type = list(object({
     name                 = string
     image_tag_mutability = string
+    force_delete         = bool
   }))
-
   default = [
     {
-      name                 = "devops-na-nuvem/production/frontend"
+      name                 = "minicursodevopsaws/production/frontend"
       image_tag_mutability = "MUTABLE"
+      force_delete         = true
     },
     {
-      name                 = "devops-na-nuvem/production/backend"
+      name                 = "minicursodevopsaws/production/backend"
       image_tag_mutability = "MUTABLE"
+      force_delete         = true
     }
   ]
 }

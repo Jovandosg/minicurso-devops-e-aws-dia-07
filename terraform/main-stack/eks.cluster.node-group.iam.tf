@@ -1,5 +1,6 @@
 resource "aws_iam_role" "eks_node_group" {
-  name = var.eks_cluster.node_group_role_name
+  name = "MiniCursoDevOpsAwsEksNodeGroupRole"
+
   assume_role_policy = jsonencode({
     Statement = [{
       Action = "sts:AssumeRole"

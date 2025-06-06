@@ -3,7 +3,7 @@ kind: KafkaNodePool
 metadata:
   name: controller
   labels:
-    strimzi.io/cluster: devops-na-nuvem-kafka-cluster
+    strimzi.io/cluster: devops-na-nuvem
 spec:
   replicas: 1
   roles:
@@ -13,7 +13,7 @@ spec:
     volumes:
       - id: 0
         type: persistent-claim
-        class: gp2
         size: 10Gi
+        class: gp2
         deleteClaim: false
         kraftMetadata: shared

@@ -8,4 +8,7 @@ affinity:
         - key: eks.amazonaws.com/nodegroup
           operator: In
           values:
-          - ${node_group_name}
+          - ${NODEGROUP}
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      - topologyKey: "kubernetes.io/hostname"

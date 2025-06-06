@@ -1,34 +1,36 @@
 ---
+
 - name: Install AWS Load Balancer Controller
   gather_facts: false
   hosts: localhost
   vars:
-    aws_region: us-west-1
-    eks_cluster: devops-na-nuvem-eks-cluster
-    aws_account_id: 968225077300
-    vpc_id: vpc-08e70b07b7b6fe133
+    CLUSTER_NAME: mini-curso-devops-aws-eks-cluster
+    AWS_REGION: us-west-1
+    AWS_ACCOUNT_ID: 968225077300
+    AWS_VPC_ID: vpc-0ef94193c94ed48e8
   tasks:
-    - name: Download IAM Policy
-      shell: |
-        curl https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.12.0/docs/install/iam_policy.json
-      register: iam_policy_json
 
-    - name: Create IAM Policy
+    - name: Download Policy
+      shell: |
+        curl https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.13.0/docs/install/iam_policy.json
+      register: load_balancer_policy
+
+    - name: Create Policy
       shell: |
         aws iam create-policy \
           --policy-name AWSLoadBalancerControllerIAMPolicy \
-          --policy-document '{{ iam_policy_json.stdout }}'
+          --policy-document '{{ load_balancer_policy.stdout }}'
 
-    - name: Setup IRSA
+    - name: IRSA
       shell: |
         eksctl create iamserviceaccount \
-          --cluster={{eks_cluster}} \
-          --namespace=kube-system \
-          --name=aws-load-balancer-controller \
-          --attach-policy-arn=arn:aws:iam::968225077300:policy/AWSLoadBalancerControllerIAMPolicy \
-          --override-existing-serviceaccounts \
-          --region {{aws_region}} \
-          --approve
+            --cluster={{CLUSTER_NAME}} \
+            --namespace=kube-system \
+            --name=aws-load-balancer-controller \
+            --attach-policy-arn=arn:aws:iam::{{AWS_ACCOUNT_ID}}:policy/AWSLoadBalancerControllerIAMPolicy \
+            --override-existing-serviceaccounts \
+            --region {{AWS_REGION}} \
+            --approve
 
     - name: Helm Repo Add
       shell: |
@@ -39,8 +41,9 @@
       shell: |
         helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
           -n kube-system \
-          --set clusterName={{eks_cluster}} \
+          --set clusterName={{CLUSTER_NAME}} \
+          --set region={{AWS_REGION}} \
+          --set vpcId={{AWS_VPC_ID}} \
           --set serviceAccount.create=false \
-          --set region={{aws_region}} \
-          --set vpcId={{vpc_id}} \
-          --set serviceAccount.name=aws-load-balancer-controller
+          --set serviceAccount.name=aws-load-balancer-controller \
+          --version 1.13.0

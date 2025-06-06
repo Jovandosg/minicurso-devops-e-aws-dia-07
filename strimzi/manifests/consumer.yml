@@ -1,10 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: consumer
   labels:
     app: consumer
-  name: consumer
-  namespace: kafka
 spec:
   replicas: 1
   selector:
@@ -16,5 +15,7 @@ spec:
         app: consumer
     spec:
       containers:
-      - image: 968225077300.dkr.ecr.us-west-1.amazonaws.com/devops-na-nuvem/strimzi/consumer:v2.0
-        name: consumer
+      - name: consumer
+        image: 968225077300.dkr.ecr.us-west-1.amazonaws.com/devops-na-nuvem/strimzi/consumer:v3.0
+        ports:
+        - containerPort: 3000

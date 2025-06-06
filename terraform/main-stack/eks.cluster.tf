@@ -4,12 +4,12 @@ resource "aws_eks_cluster" "this" {
   version                   = var.eks_cluster.version
   enabled_cluster_log_types = var.eks_cluster.enabled_cluster_log_types
 
-  access_config {
-    authentication_mode = var.eks_cluster.access_config_authentication_mode
-  }
-
   vpc_config {
     subnet_ids = aws_subnet.private[*].id
+  }
+
+  access_config {
+    authentication_mode = var.eks_cluster.access_config_authentication_mode
   }
 
   depends_on = [
